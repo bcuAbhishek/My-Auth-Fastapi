@@ -1,0 +1,78 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  # 🚀 Run FastAPI with autoreload
+  dev:
+    desc: Run FastAPI app in dev mode
+    cmds:
+      - uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+  # 🐘 Start Postgres & Redis (if you use docker-compose.yml)
+  up:
+    desc: Start docker-compose services
+    cmds:
+      - docker compose up -d
+
+  down:
+    desc: Stop docker-compose services
+    cmds:
+      - docker compose down
+
+  logs:
+    desc: Tail logs for db
+    cmds:
+      - docker compose logs -f db
+
+  # 📦 Database migrations
+  makemigrations:
+    desc: Create a new Alembic revision
+    cmds:
+      - uv run alembic revision --autogenerate -m "{{.CLI_ARGS | default('auto migration')}}"
+
+  migrate:
+    desc: Apply migrations
+    cmds:
+      - uv run alembic upgrade head
+
+  downgrade:
+    desc: Rollback last migration
+    cmds:
+      - uv run alembic downgrade -1
+
+  # 🧹 Code quality
+  lint:
+    desc: Run Ruff lint checks
+    cmds:
+      - uv run ruff check src/
+
+  lint:fix:
+    desc: Auto-fix with Ruff
+    cmds:
+      - uv run ruff check src/ --fix
+
+  fmt:
+    desc: Format code with Ruff & Black
+    cmds:
+      - uv run ruff format src/
+      - uv run black src/
+
+  # 🧪 Tests
+  test:
+    desc: Run pytest
+    cmds:
+      - uv run pytest -v
+
+  db-shell:
+    desc: Open a shell to the database
+    cmds:
+      - docker compose exec db psql -U auth-user -d auth-db
+
+  activate:
+    desc: Activate the virtual environment
+    cmds:
+      - .venv\Scripts\activate
