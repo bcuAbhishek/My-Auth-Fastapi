@@ -30,9 +30,11 @@ tasks:
 
   # 📦 Database migrations
   makemigrations:
-    desc: Create a new Alembic revision
-    cmds:
-      - uv run alembic revision --autogenerate -m "{{.CLI_ARGS | default('auto migration')}}"
+  desc: Create a new Alembic revision
+  vars:
+    MESSAGE: '{{.MESSAGE | default "auto migration"}}'
+  cmds:
+    - uv run alembic revision --autogenerate -m "{{.MESSAGE}}"
 
   migrate:
     desc: Apply migrations
